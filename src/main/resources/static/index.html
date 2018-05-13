@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>PDF书签批量增加</title>
@@ -10,20 +10,74 @@
             margin: auto;
         }
     </style>
+
     <link rel="stylesheet" href="js/layui/css/layui.css">
+    <script src="js/jquery-1.12.4.js"></script>
+    <script src="js/jquery.form.js"></script>
     <script src="js/layui/layui.js"></script>
+    <script src="js/vue.js"></script>
+
 </head>
+<script>
+
+</script>
 <body>
 <div class="container">
-    <form id="searchForm" action="/addPdfMarks"  method="post" class="form-search">
-        <div class="layui-upload">
-            <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
-            <input class="layui-upload-file" type="file" accept="undefined" name="file">
-            <span class="layui-inline layui-upload-choose">logo_jx.gif</span>
-            <button type="button" class="layui-btn" id="test9">开始上传</button>
+    <form id="searchForm" action="/addPdfMarks" method="post" enctype="multipart/form-data">
+        <div>
+            <input type="radio" value="edit" name="type">编辑pdf为继承模式</input>
+            <input type="radio" value="add" name="type">增加pdf书签</input>
         </div>
-
+        <div id="addDiv">
+            <div>
+                pdf页码偏移：<input type="text" name="offset"/>
+            </div>
+            .
+            <div>
+                pdf路径：<input type="text" name="pdf"/>
+            </div>
+            <div>
+                粘贴书签文本：
+                <textarea name="bookmarks" style="height: 200px;width: 800px;"></textarea>
+            </div>
+            <div>
+                书签格式:<textarea name="format" style="height:200px;width:800px;"></textarea>
+                <br>
+                格式：<br>
+                PDF书签生成编辑工具，使用iText开发<br>
+                复制当当或者亚马逊或者京东或者豆瓣的书签内容到txt中，即可为pdf生成书签<br>
+                也可编辑全部书签的页面大小为自定义，即书签跳转时不会重新缩放页面"<br>
+                用法：<br>
+                提供占位符：{no}-数字序号，{zh_no}-中文数字序号,{content}- 内容,{page}-页码,不需要指定空格，每行代表一个层级，制作折叠书签"<br>
+                非书签标题，例如"<br>
+                例如：1-1 传播过度的社会　/9，应该定义为{no}-{no}{content}/{page}而不是{no}-{no}{content}{page}"<br>
+                第{no}章{content}- 第1章　 到底何为定位"<br>
+                {no}-{no}{content}/{page}-- 1-1 传播过度的社会　/9"<br>
+            </div>
+        </div>
+        <input type="submit" value="提交">
     </form>
 </div>
 </body>
+<script>
+    $("[name='type']").click(function () {
+            if ($(this).val() == 'add') {
+                $("#addDiv").show();
+            }
+            else {
+                $("#addDiv").hide();
+            }
+
+        }
+    );
+    $("[name='type']").trigger("click");
+
+    $("form").ajaxForm({
+        dataType: 'json',
+        type: 'post',
+        success: function (data) {
+
+        }
+    });
+</script>
 </html>

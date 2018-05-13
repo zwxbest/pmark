@@ -34,20 +34,19 @@ public class BookMarkInput {
     public static List<BookMark> read(String file, int offset, String formatFile) throws Exception {
 
         List<String> formats = getFormarts(formatFile);
+        String[] bookmarks = file.split("\\\\r\\\\n");
 
-        BufferedReader fs = new BufferedReader(new FileReader(file));
-        String line = fs.readLine();
-        Pattern p;
 
         List<BookMark> bookMarks = new ArrayList<>();
         Matcher m;
-
-        while (line != null) {
-            final BookMark bookMark = new BookMark();
-            if (!line.trim().equals("")) {
+        Pattern p;
+        for(String bookmark:bookmarks)
+        {
+            BookMark bookMark = new BookMark();
+            if (!bookmark.trim().equals("")) {
                 for (int i = formats.size() - 1; i >= 0; i--) {
                     p = Pattern.compile(formats.get(i));
-                    m = p.matcher(line);
+                    m = p.matcher(bookmark);
                     bookMark.setParent(null);
                     if (m.find()) {
                         bookMark.setTitle(m.group(1));
@@ -66,7 +65,6 @@ public class BookMarkInput {
 
             }
             bookMarks.add(bookMark);
-            line = fs.readLine();
         }
         return bookMarks;
     }
