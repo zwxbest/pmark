@@ -14,28 +14,34 @@ import java.util.regex.Pattern;
 public class BookMarkInput {
 
 
-    static List<String> getFormarts(String formatFile) throws IOException {
-        List<String> formats = new ArrayList<>();
-        BufferedReader fs = new BufferedReader(new FileReader(formatFile));
-        String format = fs.readLine();
-        while (format != null) {
-            String separation = "[　\\s]+";//注意半角空格
-            format = format.replaceAll("^", "(");
-            format = format.replaceAll("\\{content\\}", separation + "(.*)" + separation);
-            format = format.replaceAll("\\{page\\}", separation + "([0-9]+)" + separation);
-            Matcher matcher = Pattern.compile("(\\{no\\}.*\\{no\\}})").matcher(format);//去掉空格符合换行符
-            format = matcher.replaceAll("(" + matcher.group(1) + ")");
-            format = format.replaceAll("\\{no\\}", separation + "([0-9]+)" + separation);
-            formats.add(format);
-        }
-        return formats;
+    static List<String> getFormarts(String formats) throws IOException {
+       String[] formatArray = formats.split("\\r\\\n");
+       List<String> formatList=new ArrayList<>();
+       for(String format:formatArray)
+       {
+           String separation = "[　\\\\s]*";//注意半角空格
+           String separation2 = "[　\\\\s]*?";//注意半角空格
+           format= format.replaceAll("\\.","\\\\.");
+           format = format.replaceAll("^", "(");
+           format = format.replaceAll("\\{content\\}", separation + ".*?" + separation2+")");
+           format = format.replaceAll("\\{page\\}", separation + "([0-9]+)" + separation);
+           format = format.replaceAll("\\{no\\}", separation + "[0-9]+" + separation);
+//           Matcher matcher = Pattern.compile("(\\{no\\}.*\\{no\\})").matcher(format);//去掉空格符合换行符
+//           if(matcher.find())
+//           {
+//               format = matcher.replaceAll("(" + matcher.group(1) + ")");
+//           }
+           format = format.replaceAll("\\{no\\}", separation + "([0-9]+)" + separation);
+           formatList.add(format);
+       }
+       return formatList;
+
     }
 
-    public static List<BookMark> read(String file, int offset, String formatFile) throws Exception {
+    public static List<BookMark> read(String file, Integer offset, String formatFile) throws Exception {
 
         List<String> formats = getFormarts(formatFile);
-        String[] bookmarks = file.split("\\\\r\\\\n");
-
+        String[] bookmarks = file.split("\\r\\n");
 
         List<BookMark> bookMarks = new ArrayList<>();
         Matcher m;
@@ -43,28 +49,35 @@ public class BookMarkInput {
         for(String bookmark:bookmarks)
         {
             BookMark bookMark = new BookMark();
+            boolean find=false;
             if (!bookmark.trim().equals("")) {
                 for (int i = formats.size() - 1; i >= 0; i--) {
                     p = Pattern.compile(formats.get(i));
                     m = p.matcher(bookmark);
                     bookMark.setParent(null);
                     if (m.find()) {
+                        find=true;
                         bookMark.setTitle(m.group(1));
-                        bookMark.setOrder(m.group(2));
-                        if (m.groupCount() == 4) {
-                            bookMark.setNum(Integer.valueOf(m.group(3)) + offset);
+                        bookMark.setOrder(i+1);
+                        if (m.groupCount() == 2) {
+                            bookMark.setNum(Integer.valueOf(m.group(2)) + offset);
                         }
                         for (int j = bookMarks.size() - 1; j >= 0; j--) {
-                            if (bookMark.getOrder().contains(bookMarks.get(i).getOrder() + ".")) {
-                                bookMark.setParent(bookMarks.get(i));
+                            if (bookMarks.get(j).getOrder()!=null && bookMark.getOrder()==bookMarks.get(j).getOrder()+1) {
+                                bookMark.setParent(bookMarks.get(j));
                                 break;
                             }
                         }
+                        break;
                     }
                 }
-
+                if(find==false)
+                {
+                    bookMark.setTitle(bookmark.trim());
+                }
+                bookMarks.add(bookMark);
             }
-            bookMarks.add(bookMark);
+
         }
         return bookMarks;
     }

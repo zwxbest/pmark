@@ -17,7 +17,7 @@ public class BookmarkService {
         bookmarksOperation = new BookmarksOperation();
         String destPath = getDestPath(cmd.getPdf(), cmd);
         if (cmd.getType().equals("add")) {
-            List<BookMark> bookMarks = BookMarkInput.read(cmd.getBookmarks(), cmd.getOffset(), cmd.getFormat());
+            List<BookMark> bookMarks =BookMarkInput.read(cmd.getBookmarks(), cmd.getOffset(), cmd.getFormat());
             bookmarksOperation.createBookmarks(bookMarks, cmd.getPdf(), destPath);
         } else {
             EditBookMarkToXYZ(cmd.getPdf(), destPath);
@@ -39,7 +39,7 @@ public class BookmarkService {
             if (!destFile.exists()) {
                 break;
             }
-            destPath = destPath + "-" + suffixNo + ".pdf";
+            destPath = destPath.replaceAll("\\.pdf", "") + "-" + suffixNo;
         }
         return destPath;
     }

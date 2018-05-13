@@ -1,32 +1,19 @@
 package com.nizouba.pmark;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by zwxbest on 2018/3/1.
  */
 
+@Setter @Getter
 public class BookMark implements Comparable{
     private String title;
-    private int num;
+    private int num=1;
     private BookMark parent;
-    private String order;
+    private Integer order;
 
-
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getNum() {
-        return num;
-    }
-
-    public void setNum(int num) {
-        this.num = num;
-    }
 
 
     @Override
@@ -38,20 +25,4 @@ public class BookMark implements Comparable{
         return 0;
     }
 
-
-    public BookMark getParent() {
-        return parent;
-    }
-
-    public void setParent(BookMark parent) {
-        this.parent = parent;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
 }
