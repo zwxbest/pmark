@@ -20,10 +20,10 @@ public class BookMarkInput {
        for(String format:formatArray)
        {
            String separation = "[　\\\\s]*";//注意半角空格
-           String separation2 = "[　\\\\s]*?";//注意半角空格
+           String separation2 = "[　\\\\s]*";//注意半角空格
            format= format.replaceAll("\\.","\\\\.");
            format = format.replaceAll("^", "(");
-           format = format.replaceAll("\\{content\\}", separation + ".*?" + separation2+")");
+           format = format.replaceAll("\\{content\\}", separation + "[^ ]*" + separation2+")");
            format = format.replaceAll("\\{page\\}", separation + "([0-9]+)" + separation);
            format = format.replaceAll("\\{no\\}", separation + "[0-9]+" + separation);
 //           Matcher matcher = Pattern.compile("(\\{no\\}.*\\{no\\})").matcher(format);//去掉空格符合换行符
